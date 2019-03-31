@@ -2,27 +2,27 @@
 """
 Created on Sat Dec  8 18:33:59 2018
 
-@author: hilal
+@author: hilal aksoy
 """
 import json
 import sqlite3
 
 #Json dosyasını okuma
-file=open('../instances_val2017.json','r')
-strr=file.read()
-jsObject=json.loads(strr)
+file = open('../instances_val2017.json','r')
+strr = file.read()
+jsObject = json.loads(strr)
 jsObject.keys()
 print(len(jsObject['images']))
 
 #Veritabanı bağlantısı
-con=sqlite3.connect("../val_info.db")
-cursor=con.cursor()
+con = sqlite3.connect("../val_info.db")
+cursor = con.cursor()
 
 
 def tablo_olustur():
     cursor.execute("CREATE TABLE IF NOT EXISTS  Licenses(id INT PRIMARY KEY, name TEXT,url TEXT)")
     cursor.execute("CREATE TABLE IF NOT EXISTS  Categories(supercategoryId INT,supercategory TEXT, id INT PRIMARY KEY,name TEXT, FOREIGN KEY (supercategoryId) REFERENCES Categories (id))")
-    cursor.execute("CREATE TABLE IF NOT EXISTS  Images(id INT PRIMARY KEY,file_name TEXT,height INT,width INT,coco_url TEXT,date_captured TEXT,flickr_url TEXT,license INT, FOREIGN KEY (license) REFERENCES Licenses (id))")  
+    cursor.execute("CREATE TABLE IF NOT EXISTS  Images(id INT PRIMARY KEY,file_name TEXT,height INT,width INT,coco_url TEXT,date_captured TEXT,flickr_url TEXT,license INT, FOREIGN KEY (license) REFERENCES Licenses (id))")
     cursor.execute("CREATE TABLE IF NOT EXISTS  Annotations(id INT PRIMARY KEY,area REAL,category_id INT,image_id INT,iscrowd INT, FOREIGN KEY (category_id) REFERENCES Categories (id),FOREIGN KEY (image_id) REFERENCES Images (id) )")
     cursor.execute("CREATE TABLE IF NOT EXISTS  Info(contributor TEXT,date_created TEXT,description TEXT,url TEXT,version TEXT,year INT)")
     con.commit()
@@ -37,27 +37,26 @@ def veri_ekleme_licenses():
         cursor.execute("INSERT INTO  Licenses(id,name,url) VALUES(?,?,?)",degerler3)
     con.commit()
 
-#Categories tablosuna veri ekleme
 def veri_ekleme_cat():
+    """Categories tablosuna veri ekleme"""
     supercategories = set()
-    
+
     for cat in jsObject['categories']:
         supercategories.add(cat['supercategory'])
-    supercategories_dict = {}    
-    
+    supercategories_dict = {}
+
     for i,cat in enumerate(supercategories):
         supercategories_dict[cat] = 100 + i
         cursor.execute("INSERT INTO Categories(supercategory,id,name) VALUES (?,?,?)",( '', 100 + i, cat))
-        
-    for category in jsObject['categories']:        
-        kategori=category["supercategory"]       
+
+    for category in jsObject['categories']:
+        kategori=category["supercategory"]
         sayi=category["id"]
         isim=category["name"]
         supercategoryId = supercategories_dict[category["supercategory"]]
-        degerler=(supercategoryId,kategori,sayi,isim)       
+        degerler=(supercategoryId,kategori,sayi,isim)
         cursor.execute("INSERT INTO Categories(supercategoryId,supercategory,id,name) VALUES (?,?,?,?)",degerler)
     con.commit()
-
 
 def veri_ekleme_image():
     for image in jsObject['images']:
@@ -75,8 +74,7 @@ def veri_ekleme_annotation():
        cursor.execute("INSERT INTO Annotations(id, area, category_id, image_id, iscrowd) VALUES (?,?,?,?,?)",degerler)
     con.commit()
 
-
-def veri_ekleme_info():    
+def veri_ekleme_info():
       contributor=jsObject['info']["contributor"]
       date_created=jsObject['info']["date_created"]
       description=jsObject['info']["description"]
@@ -87,32 +85,11 @@ def veri_ekleme_info():
       cursor.execute("INSERT INTO Info(contributor,date_created,description,url,version,year) VALUES (?,?,?,?,?,?)",degerler2)
       con.commit()
 
-
-
-
-#tablo_olustur()
-#veri_ekleme_cat()
-#veri_ekleme_info()
-#veri_ekleme_image()
-#veri_ekleme_licenses()
-#veri_ekleme_annotation()
-#con.close()
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+if __name__ == "__main__":
+    tablo_olustur()
+    veri_ekleme_cat()
+    veri_ekleme_info()
+    veri_ekleme_image()
+    veri_ekleme_licenses()
+    veri_ekleme_annotation()
+    con.close()
