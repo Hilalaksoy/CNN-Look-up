@@ -1,40 +1,25 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Wed Apr 10 17:01:17 2019
 
-from preprocessing.read_data import *
-from preprocessing.resizing import *
-import cv2
-import matplotlib.pyplot as plt
+@author: Hilal
+"""
 
+from keras.preprocessing.image import ImageDataGenerator
 
 DB_NAME = './data/val_info.db'
 DATA_PATH = './data/val2017'
 IMAGE_SIZE = 64
 VALIDATION_SPLIT = 0.2
 
-#i = 0
-#for resim in db_iterator(db_name, data_path):
-#    
-#    plt.imshow(resize_area(resim.get_pixel_matrix(), 256))
-#    plt.show()
-#    if i > 6:
-#        break
-#    i += 1
-    
+train_datagen = ImageDataGenerator(rescale=1./255)
 
-def data_gen(batch=32):
-    while True:
-        for chunk in get_chunks(db_iterator(DB_NAME, DATA_PATH),batch):
-            x = []
-            y = []
-            for resim in chunk:
-                x.append(resize_area(resim.get_pixel_matrix(), IMAGE_SIZE))
-                y.append(resim.labels)
-            x = np.array(x)
-            y = np.array(y)            
-            yield (x, y)
-    return
+train_generator = train_datagen.flow_from_directory(
+        DATA_PATH,
+        target_size=(IMAGE_SIZE, IMAGE_SIZE),
+        batch_size=32,
+        class_mode='categorical')
 
-        
 from keras import layers
 from keras import models
 from keras import optimizers
@@ -51,15 +36,12 @@ model.add(layers.Dense(92, activation='sigmoid'))
 
 print(model.summary())
 
-
-
 model.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-4),
               metrics=['acc'])
 
-
-
 history = model.fit_generator(
-      data_gen(50),
+      train_generator,
       steps_per_epoch=100,
       epochs=5)
+
