@@ -1,40 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from preprocessing.read_data import *
-from preprocessing.resizing import *
-import cv2
+from utility.data_generator import DataGenerator
+import tensorflow as tf
 import matplotlib.pyplot as plt
 
+VAL_DB_NAME = './data/val_info.db'
+VAL_DATA_PATH = './data/val2017'
+TRAIN_DB_NAME = './data/train_info.db'
+TRAIN_DATA_PATH = './data/train2017'
 
-DB_NAME = './data/val_info.db'
-DATA_PATH = './data/val2017'
-IMAGE_SIZE = 64
-VALIDATION_SPLIT = 0.2
+IMAGE_SIZE = 128
+BATCH_SIZE = 128
 
-#i = 0
-#for resim in db_iterator(db_name, data_path):
-#    
-#    plt.imshow(resize_area(resim.get_pixel_matrix(), 256))
-#    plt.show()
-#    if i > 6:
-#        break
-#    i += 1
-    
+val_data_gen = DataGenerator(VAL_DB_NAME, VAL_DATA_PATH,table_name='Images',image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
+train_data_gen = DataGenerator(TRAIN_DB_NAME, TRAIN_DATA_PATH,table_name='TrainImages', image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
+test_data_gen= DataGenerator(TRAIN_DB_NAME, TRAIN_DATA_PATH,table_name='TestImages', image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
 
-def data_gen(batch=32):
-    while True:
-        for chunk in get_chunks(db_iterator(DB_NAME, DATA_PATH),batch):
-            x = []
-            y = []
-            for resim in chunk:
-                x.append(resize_area(resim.get_pixel_matrix(), IMAGE_SIZE))
-                y.append(resim.labels)
-            x = np.array(x)
-            y = np.array(y)            
-            yield (x, y)
-    return
 
-        
 from keras import layers
 from keras import models
 from keras import optimizers
@@ -52,14 +34,15 @@ model.add(layers.Dense(92, activation='sigmoid'))
 print(model.summary())
 
 
-
 model.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-4),
               metrics=['acc'])
 
-
-
-history = model.fit_generator(
-      data_gen(50),
-      steps_per_epoch=100,
-      epochs=5)
+with tf.device("/gpu:0"):
+	history = model.fit_generator(
+      train_data_gen.flow(),
+      validation_data=val_data_gen.flow(),
+      steps_per_epoch=10000//BATCH_SIZE,
+      validation_steps=5000//BATCH_SIZE,
+      epochs=10)
+	model.save("training_model_1.model")

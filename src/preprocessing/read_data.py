@@ -20,7 +20,7 @@ def get_chunks(iterable, max_size):
         else:
             return
 
-def db_iterator(db_name, data_path):
+def db_iterator(db_name, data_path,table_name):
     """db_name veritabanindaki resimleri al"""
     db_connection = sqlite3.connect(db_name)
     cursor = db_connection.cursor()
@@ -29,7 +29,7 @@ def db_iterator(db_name, data_path):
     categories = None
     annotations = None
     try:
-        values = cursor.execute("Select id,file_name,height,width From Images").fetchall()
+        values = cursor.execute("Select id,file_name,height,width From"+table_name).fetchall()
         categories = cursor.execute("Select supercategoryId,supercategory,id,name From Categories").fetchall()
         annotations = cursor.execute("Select id, area, category_id, image_id, iscrowd From Annotations").fetchall()
     except sqlite3.ProgrammingError as e:

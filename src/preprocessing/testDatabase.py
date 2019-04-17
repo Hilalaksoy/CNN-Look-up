@@ -8,14 +8,6 @@ Created on Wed Apr  3 14:32:43 2019
 import json
 import sqlite3
 
-file=open('../image_info_test2017.json','r')
-strr=file.read()
-jsObject=json.loads(strr)
-jsObject.keys()
-print(len(jsObject['images']))
-
-con=sqlite3.connect("../test_info.db")
-cursor=con.cursor()
 
 def tablo_olustur():
     cursor.execute("CREATE TABLE IF NOT EXISTS  Licenses(id INT PRIMARY KEY, name TEXT,url TEXT)")
@@ -59,39 +51,45 @@ def veri_ekleme_cat():
 
 def veri_ekleme_image():
     for image in jsObject['images']:
-       degerler=(image['id'],image['file_name'], image['height'],
+        degerler=(image['id'],image['file_name'], image['height'],
                  image['width'], image['coco_url'], image['date_captured'],
                  image['license'])
-       cursor.execute("INSERT INTO Images(id,file_name,height,width,coco_url,date_captured,license) VALUES (?,?,?,?,?,?,?)",degerler)
+        cursor.execute("INSERT INTO Images(id,file_name,height,width,coco_url,date_captured,license) VALUES (?,?,?,?,?,?,?)",degerler)
     con.commit()
 
 
 def veri_ekleme_annotation():
     for annot in jsObject['annotations']:
-       degerler=(annot['id'],annot['area'], annot['category_id'],
+        degerler=(annot['id'],annot['area'], annot['category_id'],
                  annot['image_id'], annot['iscrowd'])
-       cursor.execute("INSERT INTO Annotations(id, area, category_id, image_id, iscrowd) VALUES (?,?,?,?,?)",degerler)
+        cursor.execute("INSERT INTO Annotations(id, area, category_id, image_id, iscrowd) VALUES (?,?,?,?,?)",degerler)
     con.commit()
 
 
 def veri_ekleme_info():    
-      contributor=jsObject['info']["contributor"]
-      date_created=jsObject['info']["date_created"]
-      description=jsObject['info']["description"]
-      url=jsObject['info']["url"]
-      version=jsObject['info']["version"]
-      year=jsObject['info']["year"]
-      degerler2=(contributor,date_created,description,url,version,year)
-      cursor.execute("INSERT INTO Info(contributor,date_created,description,url,version,year) VALUES (?,?,?,?,?,?)",degerler2)
-      con.commit()
+    contributor=jsObject['info']["contributor"]
+    date_created=jsObject['info']["date_created"]
+    description=jsObject['info']["description"]
+    url=jsObject['info']["url"]
+    version=jsObject['info']["version"]
+    year=jsObject['info']["year"]
+    degerler2=(contributor,date_created,description,url,version,year)
+    cursor.execute("INSERT INTO Info(contributor,date_created,description,url,version,year) VALUES (?,?,?,?,?,?)",degerler2)
+    con.commit()
 
 
-
-
-#tablo_olustur()
-#veri_ekleme_cat()
-#veri_ekleme_info()
-#veri_ekleme_image()
-#veri_ekleme_licenses()
-#veri_ekleme_annotation()  Not: Bu bilgi json dosyasında tutulmuyor.
-#con.close()
+if __name__=='__main__':
+    file=open('../image_info_test2017.json','r')
+    strr=file.read()
+    jsObject=json.loads(strr)
+    jsObject.keys()
+    print(len(jsObject['images']))
+    con=sqlite3.connect("../test_info.db")
+    cursor=con.cursor()
+    tablo_olustur()
+    veri_ekleme_cat()
+    veri_ekleme_info()
+    veri_ekleme_image()
+    veri_ekleme_licenses()
+    # veri_ekleme_annotation()  Not: Bu bilgi json dosyasında tutulmuyor.
+    con.close()
