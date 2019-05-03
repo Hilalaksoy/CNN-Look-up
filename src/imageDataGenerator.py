@@ -44,4 +44,3 @@ history = model.fit_generator(
       train_generator,
       steps_per_epoch=100,
       epochs=5)
-

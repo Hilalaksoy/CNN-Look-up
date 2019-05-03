@@ -4,17 +4,16 @@ from utility.data_generator import DataGenerator
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-VAL_DB_NAME = './data/val_info.db'
 VAL_DATA_PATH = './data/val2017'
-TRAIN_DB_NAME = './data/train_info.db'
+DB_NAME = './data/train_info.db'
 TRAIN_DATA_PATH = './data/train2017'
 
 IMAGE_SIZE = 128
 BATCH_SIZE = 128
 
-val_data_gen = DataGenerator(VAL_DB_NAME, VAL_DATA_PATH,table_name='Images',image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
-train_data_gen = DataGenerator(TRAIN_DB_NAME, TRAIN_DATA_PATH,table_name='TrainImages', image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
-test_data_gen= DataGenerator(TRAIN_DB_NAME, TRAIN_DATA_PATH,table_name='TestImages', image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
+val_data_gen = DataGenerator(DB_NAME, VAL_DATA_PATH,table_name='ValidationImages',image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
+train_data_gen = DataGenerator(DB_NAME, TRAIN_DATA_PATH,table_name='TrainImages', image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
+test_data_gen= DataGenerator(DB_NAME, TRAIN_DATA_PATH,table_name='TestImages', image_size=IMAGE_SIZE, resizing_method='area', batch=BATCH_SIZE)
 
 
 from keras import layers
@@ -38,11 +37,25 @@ model.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-4),
               metrics=['acc'])
 
-with tf.device("/gpu:0"):
-	history = model.fit_generator(
-      train_data_gen.flow(),
-      validation_data=val_data_gen.flow(),
-      steps_per_epoch=10000//BATCH_SIZE,
-      validation_steps=5000//BATCH_SIZE,
-      epochs=10)
-	model.save("training_model_1.model")
+
+# 20 epochs, runs over all data 4 times
+history = model.fit_generator(
+          train_data_gen.flow(),
+          validation_data=val_data_gen.flow(),
+          steps_per_epoch=16000//BATCH_SIZE,
+          validation_steps=1000//BATCH_SIZE,
+          epochs=10)
+
+model.save("CNN.model")
+scores = model.evaluate_generator(
+		test_data_gen.flow(),
+		 steps=35000//BATCH_SIZE)
+
+
+import json
+
+with open('history.json', 'w') as w:
+	w.write(json.dumps(history.history))
+	
+
+#Out[2]: [0.10507524474745705, 0.9704729473634517]

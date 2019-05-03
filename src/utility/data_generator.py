@@ -1,5 +1,6 @@
 from preprocessing.read_data import *
 from preprocessing.resizing import *
+import numpy as np
 
 class DataGenerator(object):
     """

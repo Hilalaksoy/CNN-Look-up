@@ -16,7 +16,7 @@ class Image(object):
             except IOException as e:
                 raise e
         else:
-            self._matrix = None
+            self.matrix = None
 
     def get_pixel_matrix(self):
         if self.matrix is None:
@@ -25,3 +25,4 @@ class Image(object):
             except IOException as e:
                 raise e
         return self.matrix
+

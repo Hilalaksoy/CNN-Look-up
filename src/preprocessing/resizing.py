@@ -51,5 +51,3 @@ if __name__=="__main__":
     #print(img)
     #print('Original Dimensions : ',img.shape)
     #resize_with_matrix(img,64)
-
-
