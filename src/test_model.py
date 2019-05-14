@@ -13,8 +13,29 @@ Created on Tue Apr 16 16:08:23 2019
 
 import numpy as np
 
-model= load_model('256_area/CNN2.model')
+model= load_model('256_area_grayscale/CNN.model')
 
+print(model.summary())
+
+with open('256_area_grayscale/history.json', 'r') as fi:
+    history = json.loads(fi.read())
+
+import matplotlib.pyplot as plt
+
+top_k_categorical_accuracy = history["top_k_categorical_accuracy"]
+val_top_k_categorical_accuracy = history['val_top_k_categorical_accuracy']
+
+epochs = range(1, len(top_k_categorical_accuracy) + 1)
+
+plt.plot(epochs, top_k_categorical_accuracy, 'bo', label='Training top_k_categorical_accuracy')
+plt.plot(epochs, val_top_k_categorical_accuracy, 'b', label='Validation top_k_categorical_accuracy')
+plt.title('Training and validation accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+
+plt.show()
+##################################################
 etiket = None
 images = ['cat.jpg', 'cow.jpg', 'pc.jpg','redapple.jpg','zebra.jpg', 'dog.jpg', 'dining_table.jpg' ,'apple.jpg', 'banana.jpg', 'bus.jpg',
 		   'cup_knife.jpg', 'person_with_umbrella.jpg', 'red_truck.jpg', 'sheeps.jpg']

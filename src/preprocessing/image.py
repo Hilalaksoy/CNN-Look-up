@@ -3,7 +3,7 @@ import cv2
 
 class Image(object):
     """Image object holds some attr's about every image"""
-    def __init__(self, _id, full_path, height_value, width_value, labels_value, read_image=True ):
+    def __init__(self, _id, full_path, height_value, width_value, labels_value, read_image=True,grayscale = False):
         self.full_path = full_path
         self.height = height_value
         self.width = width_value

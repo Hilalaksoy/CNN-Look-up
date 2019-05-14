@@ -5,7 +5,7 @@ import keras.backend as K
 import numpy as np
 import keras
 from keras import models
-from keras.layers import Conv2D, Activation, MaxPooling2D, Dropout, Flatten, Dense ,SeparableConv2D
+from keras.layers import Conv2D, Activation, MaxPooling2D, Dropout, Flatten, Dense
 
 VAL_DATA_PATH = './data/val2017'
 DB_NAME = './data/train_info.db'
@@ -57,32 +57,6 @@ model.add(Dense(256))
 model.add(Activation('sigmoid'))
 model.add(Dense(NUM_CLASSES, activation='sigmoid'))
 
-
-#model = models.Sequential()
-#model.add(Conv2D(32, (5, 5), activation='relu', input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)))
-#model.add(Activation('relu'))
-#model.add(Conv2D(32, (3, 3)))
-#model.add(Activation('relu'))
-#model.add(MaxPooling2D(pool_size=(2, 2)))
-#
-#model.add(Conv2D(64, (3, 3), padding='same'))
-#model.add(Activation('relu'))
-#model.add(Conv2D(64, (3, 3)))
-#model.add(Activation('relu'))
-#model.add(MaxPooling2D(pool_size=(2, 2)))
-#
-#model.add(Conv2D(128, (3, 3), padding='same'))
-#model.add(Activation('relu'))
-#model.add(Conv2D(128, (3, 3)))
-#model.add(Activation('relu'))
-#model.add(MaxPooling2D(pool_size=(2, 2)))
-#
-#model.add(Flatten())
-#model.add(Dense(1024))
-#model.add(Activation('sigmoid'))
-#model.add(Dense(512))
-#model.add(Activation('sigmoid'))
-#model.add(Dense(NUM_CLASSES, activation='sigmoid'))
 
 print(model.summary())
 

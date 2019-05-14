@@ -20,7 +20,7 @@ def get_chunks(iterable, max_size):
         else:
             return
 
-def db_iterator(db_name, data_path,table_name, read_images=True):
+def db_iterator(db_name, data_path,table_name, read_images=True, grayscale=False):
     """db_name veritabanindaki resimleri al"""
     db_connection = sqlite3.connect(db_name)
     cursor = db_connection.cursor()

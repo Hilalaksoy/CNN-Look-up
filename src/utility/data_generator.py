@@ -8,7 +8,7 @@ class DataGenerator(object):
     resizing method: 
         ('area', resize_area)
     """
-    def __init__(self, db_name, data_path,table_name,image_size=64, resizing_method='area', batch=128):
+    def __init__(self, db_name, data_path,table_name,image_size=64, resizing_method='area', batch=128, grayscale=False):
         super(DataGenerator, self).__init__()
         self.batch = batch
         self.db_name = db_name
@@ -16,10 +16,11 @@ class DataGenerator(object):
         self.table_name = table_name
         self.image_size = image_size
         self.resizing_method = resizing_method
+        self.grayscale = grayscale
     
     def flow(self):
         while True:
-            for chunk in get_chunks(db_iterator(self.db_name, self.data_path,self.table_name), self.batch):
+            for chunk in get_chunks(db_iterator(self.db_name, self.data_path,self.table_name, grayscale=self.grayscale), self.batch):
                 x = []
                 y = []
                 for resim in chunk:

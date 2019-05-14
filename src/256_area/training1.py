@@ -5,7 +5,7 @@ import keras.backend as K
 import numpy as np
 import keras
 from keras import models
-from keras.layers import Conv2D, Activation, MaxPooling2D, Dropout, Flatten, Dense ,SeparableConv2D
+from keras.layers import Conv2D, Activation, MaxPooling2D, Dropout, Flatten, Dense
 
 VAL_DATA_PATH = './data/val2017'
 DB_NAME = './data/train_info.db'

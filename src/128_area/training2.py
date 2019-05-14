@@ -73,12 +73,6 @@ for i in range(VAL_BATCH_NO):
 	y_val = np.concatenate((y_val, y), axis=0)
 
 
-#from keras.callbacks import ModelCheckpoint
-#filepath="weights.best.hdf5"
-#checkpoint = ModelCheckpoint(filepath, monitor='binary_crossentropy', save_best_only=True,  verbose=1, mode='min')
-#
-#callbacks_list = [checkpoint]
-
 history = model.fit(
           x_train, y_train,
 		  batch_size=BATCH_SIZE,

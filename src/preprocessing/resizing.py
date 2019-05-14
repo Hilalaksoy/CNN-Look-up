@@ -41,9 +41,6 @@ def resize_with_padding(image, max_size):
     
     return cv2.copyMakeBorder(image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
 
-#def resize_with_nearest_neighbor(image, max_size):
-    
-
 
 if __name__=="__main__":
     """resize with OpenCv ."""
@@ -51,3 +48,5 @@ if __name__=="__main__":
     #print(img)
     #print('Original Dimensions : ',img.shape)
     #resize_with_matrix(img,64)
+
+
